@@ -15,6 +15,20 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const userLogged = window.localStorage.getItem('loggedBlogAppUser')
+    if (userLogged) {
+      setUser(JSON.parse(user.token))
+      blogService.setToken(user.token)
+    }
+  }, [])
+
+  const handleLogout = () => {
+    setUser(null)
+    blogService.setToken(null)
+    window.localStorage.removeItem('loggedBlogAppUser')
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -23,6 +37,9 @@ const App = () => {
       password
     })
       .then(user => {
+        blogService.setToken(user.token)
+        // window.localStorage.setItem('token', user.token)
+        window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
         setUser(user)
         setUsername('')
         setPassword('')
@@ -30,29 +47,41 @@ const App = () => {
       .catch(e => console.log(e.message))
   }
 
+  if (user === null) {
+    return (
+      <div>
+        <h2>Log in to application</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <input
+              type='text'
+              value={username}
+              name='Username'
+              placeholder='Username'
+              onChange={({target}) => setUsername(target.value)} 
+            />
+          </div>
+          <div>
+            <input
+              type='password'
+              value={password}
+              name='Password'
+              placeholder='Password'
+              onChange={({target}) => setPassword(target.value)} 
+            />
+          </div>
+          <button>Login</button>
+        </form>
+      </div>
+    )
+  }
+
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input
-            type='text'
-            value={username}
-            name='Username'
-            placeholder='Username'
-            onChange={({target}) => setUsername(target.value)} 
-          />
-        </div>
-        <div>
-          <input
-            type='password'
-            value={password}
-            name='Password'
-            placeholder='Password'
-            onChange={({target}) => setPassword(target.value)} 
-          />
-        </div>
-        <button>Login</button>
-      </form>
+      <p>
+        {user.name} logged in
+        <button onClick={handleLogout}>Logout</button>
+      </p>
       <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
