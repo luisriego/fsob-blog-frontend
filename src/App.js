@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import { BlogForm } from './components/BlogForm'
+import { LoginForm } from './components/LoginForm'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -8,6 +11,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState([])
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -18,8 +22,8 @@ const App = () => {
   useEffect(() => {
     const userLogged = window.localStorage.getItem('loggedBlogAppUser')
     if (userLogged) {
-      setUser(JSON.parse(user.token))
-      blogService.setToken(user.token)
+      setUser(JSON.parse(userLogged))
+      blogService.setToken(JSON.parse(userLogged).token)
     }
   }, [])
 
@@ -44,45 +48,40 @@ const App = () => {
         setUsername('')
         setPassword('')
       })
-      .catch(e => console.log(e.message))
+      .catch(err => {
+        console.log(err)
+        setMessage([
+            `Wrong username or password`,
+            'error'
+        ])
+      })
   }
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <input
-              type='text'
-              value={username}
-              name='Username'
-              placeholder='Username'
-              onChange={({target}) => setUsername(target.value)} 
-            />
-          </div>
-          <div>
-            <input
-              type='password'
-              value={password}
-              name='Password'
-              placeholder='Password'
-              onChange={({target}) => setPassword(target.value)} 
-            />
-          </div>
-          <button>Login</button>
-        </form>
+        <Notification message={message} />
+        <LoginForm 
+          username={username}
+          password={password}
+          handleUsernameChange={({target}) => setUsername(target.value)}
+          handlePasswordChange={({target}) => setPassword(target.value)}
+          handleSubmit={handleSubmit}
+        />
       </div>
     )
   }
 
   return (
     <div>
+      <h2>blogs</h2>
+      <Notification message={message} />
       <p>
-        {user.name} logged in
+        {user.name} logged in 
         <button onClick={handleLogout}>Logout</button>
       </p>
-      <h2>blogs</h2>
+      <BlogForm user={user} setMessage={setMessage} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
