@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
+
 import Blog from './components/Blog'
 import { BlogForm } from './components/BlogForm'
 import { LoginForm } from './components/LoginForm'
 import Notification from './components/Notification'
+import { Togglable } from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -42,7 +44,6 @@ const App = () => {
     })
       .then(user => {
         blogService.setToken(user.token)
-        // window.localStorage.setItem('token', user.token)
         window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
         setUser(user)
         setUsername('')
@@ -81,9 +82,13 @@ const App = () => {
         {user.name} logged in 
         <button onClick={handleLogout}>Logout</button>
       </p>
-      <BlogForm user={user} setMessage={setMessage} />
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      <Togglable buttonLabel={'crete new blog'}>
+        <BlogForm user={user} setMessage={setMessage} />
+      </Togglable>
+      {blogs
+        .sort((a, b) => a.likes > b.likes ? -1 : 1)
+        .map(blog =>
+          <Blog blog={blog} setMessage={setMessage} key={blog.id} />
       )}
     </div>
   )

@@ -14,11 +14,29 @@ const getAll = () => {
 const create = (blog) => {
   const header = {
     headers: { Authorization: token }
-};
+  };
 
   const request = axios.post(baseUrl, blog, header)
   return request.then(response => response.data)
 }
 
+const update = (blog) => {
+  const header = {
+    headers: { Authorization: token }
+  };
+
+  const request = axios.put(`${baseUrl}/${blog.id}`, blog, header)
+  return request.then(response => response.data)
+}
+
+const remove = (blogId) => {
+  const header = {
+    headers: { Authorization: token }
+  };
+
+  const request = axios.delete(`${baseUrl}/${blogId}`, header)
+  return request.then(response => response.data)
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create, setToken }
+export default { getAll, create, update, remove, setToken }

@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 
 import blogService from '../services/blogs'
 
-export const BlogForm = ({user, setMessage}) => {
+export const BlogForm = ({setMessage}) => {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [url, setUrl] = useState('')
+    const likes = 0
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -13,16 +14,19 @@ export const BlogForm = ({user, setMessage}) => {
         const newBlog = {
             title,
             author,
-            url
+            url,
+            likes
         }
 
         blogService.create(newBlog)
             .then(blog => {
-                console.log(blog, blog.name)
                 setMessage([
                     `A new blog ${blog.title} by ${blog.author} added`,
                     'success'
                 ])
+                setAuthor('')
+                setTitle('')
+                setUrl('')
             })
             .catch(err => {
                 setMessage([
