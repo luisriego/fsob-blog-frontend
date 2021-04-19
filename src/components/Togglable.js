@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 
-export const Togglable = ({children, buttonLabel, buttonCloseLabel = 'cancel', ref}) => {
+import PropTypes from 'prop-types';
+
+export const Togglable = ({children, buttonLabel = 'view', buttonCloseLabel = 'hide'}) => {
     const [visible, setVisible] = useState(false)
 
     const hideWhenVisible = { display: visible ? 'none' : '' }
@@ -22,3 +24,8 @@ export const Togglable = ({children, buttonLabel, buttonCloseLabel = 'cancel', r
         </div>
     )
 }
+
+Togglable.propTypes = {
+    buttonLabel: PropTypes.string,
+    buttonCloseLabel: PropTypes.string
+};

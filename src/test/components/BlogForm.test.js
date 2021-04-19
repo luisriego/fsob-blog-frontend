@@ -28,11 +28,5 @@ describe('The blog', () => {
         component.getByText('the url')
         component.getByText('likes 0')
         component.getByText('remove')
-        const likeBtn = component.getByText('like')
-        fireEvent.click(likeBtn)
-        component.getByText('likes 1')
-        fireEvent.click(likeBtn)
-        component.getByText('likes 0')
-        component.getByText('likes 0')
     })
 });

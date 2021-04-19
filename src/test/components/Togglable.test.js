@@ -1,21 +1,34 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import { Togglable } from '../../components/Togglable'
 import { BlogForm } from '../../components/BlogForm'
 
-test('should render the content', () => {
-    const user = JSON.parse(window.localStorage.getItem('loggedBlogAppUser'))
-    const setMessage = [
-        `Wrong username or password`,
-        'error'
-    ]
+describe('The Togglable element', () => {
+    let component
+    const buttonLabel = 'view'
 
-    const component = render(
-        <Togglable buttonLabel={'new note'}>
-            <BlogForm user={user} setMessage={setMessage} />
-        </Togglable>
-      )
-    
-    component.getByText('new note')
-})
+    beforeEach(() => {
+        component = render(
+            <Togglable buttonLabel={buttonLabel}>
+                <div>testDivContent</div>
+            </Togglable>
+        )
+    })
+
+    test('should render his children prop', () => {
+        component.getByText('testDivContent')
+    })
+
+    test('should render his children prop \'display: none\'', () => {
+        const el = component.getByText('testDivContent')
+        expect(el.parentNode).toHaveStyle('display: none')
+    })
+
+    test('should render his children prop when clicked', () => {
+        const el = component.getByText('testDivContent')
+        const button = component.getByText(buttonLabel)
+        fireEvent.click(button)
+        expect(el.parentNode).not.toHaveStyle('display: none')
+    })
+});

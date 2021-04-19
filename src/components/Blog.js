@@ -69,7 +69,7 @@ const Blog = ({ blog, setMessage }) => {
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
-      <Togglable buttonLabel={'view'} buttonCloseLabel={'hide'} >
+      <Togglable >
           <p>{blog.url}</p>
           <p>likes {blog.likes}<button onClick={toggleLike}>like</button></p>
           <p>{blog.user.name}</p>
