@@ -9,7 +9,12 @@
 // ***********************************************
 //
 //
+
+import jwtDecode from "jwt-decode"
+
 // -- This is a parent command --
+let id = ''
+let user = ''
 Cypress.Commands.add('login', ({username, password}) => { 
     cy.request('POST', 'http://localhost:3001/api/login', {
         username,
@@ -32,11 +37,27 @@ Cypress.Commands.add('createBlog', ({title, author, url}) => {
         headers: {
           Authorization: `Bearer ${JSON.parse(localStorage.getItem('loggedBlogAppUser')).token}`
         }
+      }).then((response) => {
+        return new Promise(resolve => {        
+            expect(response).property('status').to.equal(201)
+            expect(response.body).property('id').to.not.be.oneOf([null, ""])
+            id = response.body.id
+            expect(response.body).property('id').to.equal(id)
+            const respBody = response.body;
+            resolve(respBody['id'])
+        })
       })
       cy.visit('http://localhost:3000')
 })
 
-Cypress.Commands.add('editBlog', ({id, title, author, url, likes}) => { 
+Cypress.Commands.add('editBlog', ({title, author, url, likes}) => { 
+    cy.request('GET', 'http://localhost:3001/api/blogs')
+      .then(response => {
+        expect(response).property('status').to.equal(200)
+        const blog = response.body[0]
+        expect(blog.user.id).not.to.equal('')
+        user = blog.user.id
+      })
     cy.request({
         method: 'PUT',
         url: `http://localhost:3001/api/blogs/${id}`,
@@ -44,7 +65,8 @@ Cypress.Commands.add('editBlog', ({id, title, author, url, likes}) => {
           title,
           author,
           url,
-          likes
+          likes,
+          user
         },
         headers: {
           Authorization: `Bearer ${JSON.parse(localStorage.getItem('loggedBlogAppUser')).token}`

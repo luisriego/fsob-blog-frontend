@@ -4,7 +4,7 @@ describe('Blog app', function() {
     // create here a user to backend
     cy.visit('http://localhost:3000')
 
-    const user = {
+      const user = {
       username: "menganito",
       name: "Mengano de Zetano",
       password: "test"
@@ -67,13 +67,12 @@ describe('Blog app', function() {
           url: 'www.menganito.com'
         })
 
-        cy.editBlog({
-          id: '123456789',
-          title: 'Another blog',
-          author: 'menganito',
-          url: 'www.menganito.com',
-          likes: 3
-        })
+        // cy.editBlog({
+        //   title: 'Another blog',
+        //   author: 'menganito',
+        //   url: 'www.menganito.com',
+        //   likes: 4
+        // })
       })
 
       it('the like button add or subs 1', () => {
@@ -90,6 +89,14 @@ describe('Blog app', function() {
         cy.contains('remove').click()
         cy.get('.success').should('contain', 'Blog removed successfully')
         cy.visit('http://localhost:3000')
+      })
+
+      it('order by likes', () => {
+        cy.contains('Other blog')
+        cy.contains('view').click()
+        cy.contains('like').click()
+        cy.contains('likes 1')
+
       })
     })
   })
